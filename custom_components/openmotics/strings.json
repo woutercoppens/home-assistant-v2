@@ -1,0 +1,33 @@
+{
+  "config": {
+    "title": "OpenMotics",
+    "step": {
+      "user": {
+        "title": "Set up OpenMotics Controller",
+        "data": {
+          "host": "Host",
+          "client_id": "client_id",
+          "client_secret": "client_secret",
+          "port": "Port",
+          "verify_ssl": "Controller using proper certificate"
+        }
+      },
+      "select_installation": {
+        "title": "Select the installation",
+        "description": "Please select the OpenMotics installation you wish to add to Home Assistant.",
+        "data": {
+          "installation_id": "[%key:common::config_flow::data::installation%]"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect, please try again",
+      "invalid_auth": "Invalid authentication",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "already_configured": "Device is already configured",
+      "no_available_installations": "There are no available OpenMotics installation to setup in Home Assistant."
+    }
+  }
+}

@@ -1,0 +1,84 @@
+"""Support for HomeAssistant switches."""
+from __future__ import annotations
+
+import logging
+
+from homeassistant.components.switch import (
+    SwitchEntity,
+)
+from homeassistant.config_entries import ConfigEntry
+# from homeassistant.const import STATE_OFF, STATE_ON
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+
+from .const import DOMAIN, NOT_IN_USE
+from .coordinator import OpenMoticsDataUpdateCoordinator
+from .entity import OpenMoticsDevice
+
+_LOGGER = logging.getLogger(__name__)
+
+
+async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+    """Component doesn't support configuration through configuration.yaml."""
+    return
+
+
+async def async_setup_entry(
+    hass: HomeAssistant,
+    entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Set up Switches for OpenMotics Controller."""
+    entities = []
+
+    coordinator: OpenMoticsDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
+
+    for index, om_outlet in enumerate(coordinator.data["outputs"]):
+        if (
+            om_outlet.name is None
+            or om_outlet.name == ""
+            or om_outlet.name == NOT_IN_USE
+        ):
+            continue
+
+        # Outputs can contain outlets and lights, so filter out only the outlets (aka switches)
+        if om_outlet.output_type == "OUTLET":
+            entities.append(OpenMoticsSwitch(coordinator, index, om_outlet))
+
+    if not entities:
+        _LOGGER.info("No OpenMotics Outlets added")
+        return False
+
+    async_add_entities(entities,True)
+
+
+class OpenMoticsSwitch(OpenMoticsDevice, SwitchEntity):
+    """Representation of a OpenMotics switch."""
+
+    def __init__(self, coordinator: OpenMoticsDataUpdateCoordinator, index, om_switch):
+        """Initialize the switch."""
+        super().__init__(coordinator, index, om_switch, "switch")
+
+        self._device = self.coordinator.data["outputs"][self.index]
+
+    @property
+    def is_on(self):
+        """Return true if device is on."""
+        return self._device.status.on
+
+    async def async_turn_on(self, **kwargs):
+        """Turn devicee off."""
+        await self.coordinator.omclient.outputs.turn_on(
+            self.install_id,
+            self.device_id,
+            100,  # value is required but an outlet goes only on/off so we set it to 100
+        )
+        await self.coordinator.async_refresh()
+
+    async def async_turn_off(self, **kwargs):
+        """Turn devicee off."""
+        await self.coordinator.omclient.outputs.turn_off(
+            self.install_id,
+            self.device_id,
+        )
+        await self.coordinator.async_refresh()

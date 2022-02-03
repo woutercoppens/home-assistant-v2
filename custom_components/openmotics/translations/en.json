@@ -1,0 +1,36 @@
+{
+    "config": {
+        "title": "OpenMotics",
+        "step": {
+            "user": {
+                "title": "OpenMotics",
+                "description": "If you need help with the configuration have a look here: https://github.com/openmotics/home-assistant",
+                "data": {
+                    "host": "OpenMotics Host (e.g. \"cloud.openmotics.com\")",
+                    "client_id": "Client ID",
+                    "client_secret": "Client secret",
+                    "port": "Port Number (443)",
+                    "verify_ssl": "Verify SSL Certificate"
+                }
+            },
+            "Installation": {
+                "title": "OpenMotics Installation",
+                "description": "Select the installation you want to add to Home Assistant",
+                "data": {
+                    "installation_id": "Installation ID"
+                }
+            }
+        },
+        "error": {
+            "auth": "Something went wrong."
+        },
+        "abort": {
+            "cannot_connect": "Error connecting to Open Motics.",
+            "invalid_auth": "Invalid client_id and client_secret",
+            "missing_configuration": "The OpenMotics integration is not configured. Please follow the documentation."
+        },
+        "create_entry": {
+            "default": "Successfully authenticated with OpenMotics."
+        }
+    }
+}
