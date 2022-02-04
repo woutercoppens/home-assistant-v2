@@ -59,11 +59,10 @@ class OpenMoticsSwitch(OpenMoticsDevice, SwitchEntity):
         """Initialize the switch."""
         super().__init__(coordinator, index, om_switch, "switch")
 
-        self._device = self.coordinator.data["outputs"][self.index]
-
     @property
     def is_on(self):
         """Return true if device is on."""
+        self._device = self.coordinator.data["outputs"][self.index]
         return self._device.status.on
 
     async def async_turn_on(self, **kwargs):
@@ -78,6 +77,14 @@ class OpenMoticsSwitch(OpenMoticsDevice, SwitchEntity):
     async def async_turn_off(self, **kwargs):
         """Turn devicee off."""
         await self.coordinator.omclient.outputs.turn_off(
+            self.install_id,
+            self.device_id,
+        )
+        await self.coordinator.async_refresh()
+
+    async def async_toggle(self, **kwargs):
+        """Turn devicee off."""
+        await self.coordinator.omclient.outputs.toggle(
             self.install_id,
             self.device_id,
         )

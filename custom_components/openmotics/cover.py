@@ -81,6 +81,7 @@ class OpenMoticsShutter(OpenMoticsDevice, CoverEntity):
     def current_cover_position(self):
         """Return the current position of cover."""
         # None is unknown, 0 is closed, 100 is fully open.
+        self._device = self.coordinator.data["shutters"][self.index]
         return self._device.status.position
 
     async def async_open_cover(self, **kwargs):

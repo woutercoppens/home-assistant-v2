@@ -55,13 +55,13 @@ async def async_setup_entry(
         ):
             continue
 
-        if om_sensor.physical_quantity == "temperature":
+        if om_sensor.status.temperature is not None:
             entities.append(OpenMoticsTemperature(coordinator, index, om_sensor, "Sensor"))
 
-        if om_sensor.physical_quantity == "humidity":
+        if om_sensor.status.humidity is not None:
             entities.append(OpenMoticsHumidity(coordinator, index, om_sensor, "Sensor"))
 
-        if om_sensor.physical_quantity == "brightness":
+        if oom_sensor.status.brightness is not None:
             entities.append(OpenMoticsHumidity(coordinator, index, om_sensor, "Sensor"))
 
     if not entities:
@@ -85,8 +85,7 @@ class OpenMoticsSensor(OpenMoticsDevice, SensorEntity):
     ):
         """Initialize the light."""
         super().__init__(coordinator, index, device, "sensor")
-        self._device = self.coordinator.data["sensors"][self.index]
-
+        
         self.entity_description = description
         self._state = None
 
@@ -100,6 +99,7 @@ class OpenMoticsTemperature(OpenMoticsSensor):
     @property
     def native_value(self):
         """Return % chance the aurora is visible."""
+        self._device = self.coordinator.data["sensors"][self.index]
         return self._device.status.temperature
 
 class OpenMoticsHumidity(OpenMoticsSensor):
@@ -111,6 +111,7 @@ class OpenMoticsHumidity(OpenMoticsSensor):
     @property
     def native_value(self):
         """Return % chance the aurora is visible."""
+        self._device = self.coordinator.data["sensors"][self.index]
         return self._device.status.humidity
 
 class OpenMoticsBrightness(OpenMoticsSensor):
@@ -122,4 +123,5 @@ class OpenMoticsBrightness(OpenMoticsSensor):
     @property
     def native_value(self):
         """Return % chance the aurora is visible."""
+        self._device = self.coordinator.data["sensors"][self.index]
         return self._device.status.brightness

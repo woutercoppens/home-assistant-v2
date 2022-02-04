@@ -95,7 +95,7 @@ class OpenMoticsOutputLight(OpenMoticsDevice, LightEntity):
         """Initialize the light."""
         super().__init__(coordinator, index, device, "light")
 
-        self._device = self.coordinator.data["outputs"][self.index]
+        # self._device = self.coordinator.data["outputs"][self.index]
 
         self._attr_supported_color_modes = set()
 
@@ -106,12 +106,13 @@ class OpenMoticsOutputLight(OpenMoticsDevice, LightEntity):
     @property
     def is_on(self) -> bool:
         """Return true if device is on."""
-        # self._device = self.coordinator.data["outputs"][self.index]
+        self._device = self.coordinator.data["outputs"][self.index]
         return self._device.status.on
 
     @property
     def brightness(self):
         """Return the brightness of this light between 0..255."""
+        self._device = self.coordinator.data["outputs"][self.index]
         return self._device.status.value
 
     async def async_turn_on(self, **kwargs: Any) -> None:
@@ -152,6 +153,12 @@ class OpenMoticsOutputLight(OpenMoticsDevice, LightEntity):
         )
         await self.coordinator.async_refresh()
 
+    # async def _async_update_callback(self) -> None:
+    #     """Update the entity."""
+    #     self._device = self.coordinator.data["outputs"][self.index]
+
+    #     await self.async_update_ha_state(True)
+
 class OpenMoticsLight(OpenMoticsDevice, LightEntity):
     """Representation of a OpenMotics light."""
 
@@ -161,8 +168,6 @@ class OpenMoticsLight(OpenMoticsDevice, LightEntity):
         """Initialize the light."""
         super().__init__(coordinator, index, device, "light")
         
-        self._device = self.coordinator.data["lights"][self.index]
-
         self._attr_supported_color_modes = set()
 
         if "RANGE" in device.capabilities:
@@ -180,11 +185,13 @@ class OpenMoticsLight(OpenMoticsDevice, LightEntity):
     @property
     def is_on(self):
         """Return true if device is on."""
+        self._device = self.coordinator.data["lights"][self.index]
         return self._device.status.on
 
     @property
     def brightness(self):
         """Return the brightness of this light between 0..255."""
+        self._device = self.coordinator.data["lights"][self.index]
         return self._device.status.value
 
     async def async_turn_on(self, **kwargs: Any) -> None:
