@@ -14,8 +14,8 @@ from homeassistant.const import (
     CONF_VERIFY_SSL,
 )
 from oauthlib.oauth2.rfc6749.errors import InvalidClientError
-from pyopenmotics.openmotics import BackendClient
-from pyopenmotics.exceptions import (
+from pyhaopenmotics.openmotics import BackendClient
+from pyhaopenmotics.exceptions import (
     OpenMoticsError,
     OpenMoticsConnectionError,
     OpenMoticsConnectionTimeoutError,
