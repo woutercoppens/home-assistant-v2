@@ -59,7 +59,7 @@ class OpenMoticsFlowHandler(config_entries.ConfigFlow):
         """Create a new instance of the flow handler."""
         self.config = {}
         self.installation_id = None
-        self.installations = {}
+        self.installations = []
         self.clientid = None
         self.client_secret = None
 
