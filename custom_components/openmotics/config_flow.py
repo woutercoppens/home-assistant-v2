@@ -153,9 +153,9 @@ class OpenMoticsFlowHandler(config_entries.ConfigFlow):
             ]
 
             installations_options = {
-                installation["id"]: installation["name"]
+                installation.idx: installation.name
                 for installation in self.installations
-                if installation["id"] not in existing_installations
+                if installation.idx not in existing_installations
             }
             if not installations_options:
                 return self.async_abort(reason="no_available_installation")
