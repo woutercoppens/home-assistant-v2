@@ -14,8 +14,8 @@ from homeassistant.const import (
     CONF_VERIFY_SSL,
 )
 from oauthlib.oauth2.rfc6749.errors import InvalidClientError
-from pyhaopenmotics.openmotics import BackendClient
-from pyhaopenmotics.exceptions import (
+from pyhaopenmotics.openmotics import CloudClient, LocalGatewayClient
+from pyhaopenmotics.errors import (
     OpenMoticsError,
     OpenMoticsConnectionError,
     OpenMoticsConnectionTimeoutError,
@@ -96,12 +96,12 @@ class OpenMoticsFlowHandler(config_entries.ConfigFlow):
             try:
                 # Create a backendclient object and verify authentication.
                 if self.config[CONF_HOST] == DEFAULT_HOST:
-                    backendclient = BackendClient(
+                    backendclient = CloudClient(
                         client_id=self.config[CONF_CLIENT_ID],
                         client_secret=self.config[CONF_CLIENT_SECRET],
                     )
                 else:
-                    backendclient = BackendClient(
+                    backendclient = LocalGatewayClient(
                         client_id=self.config[CONF_CLIENT_ID],
                         client_secret=self.config[CONF_CLIENT_SECRET],
                         server=self.config[CONF_HOST],
