@@ -110,7 +110,7 @@ class OpenMoticsFlowHandler(config_entries.ConfigFlow):
                     )
                 await backendclient.get_token()
 
-                self.installations = backendclient.installations.get_all()
+                self.installations = await backendclient.installations.get_all()
 
             # TODO: add proper error handling
             except (
