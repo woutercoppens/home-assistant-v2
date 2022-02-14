@@ -16,11 +16,11 @@ from homeassistant.const import (
 from oauthlib.oauth2.rfc6749.errors import InvalidClientError
 from pyhaopenmotics.openmotics import CloudClient, LocalGatewayClient
 from pyhaopenmotics.errors import (
-    OpenMoticsError,
-    OpenMoticsConnectionError,
-    OpenMoticsConnectionTimeoutError,
-    OpenMoticsRateLimitError,
-    # OpenMoticsAuthenticationError,
+    ApiException,
+#     OpenMoticsConnectionError,
+#     OpenMoticsConnectionTimeoutError,
+#     OpenMoticsRateLimitError,
+#     # OpenMoticsAuthenticationError,
 )
 
 from .const import (
@@ -117,11 +117,7 @@ class OpenMoticsFlowHandler(config_entries.ConfigFlow):
             # TODO: add proper error handling
             except (
                 asyncio.TimeoutError,
-                OpenMoticsError,
-                OpenMoticsConnectionError,
-                OpenMoticsConnectionTimeoutError,
-                OpenMoticsRateLimitError,
-                OpenMoticsAuthenticationError,
+                ApiException,
             ) as err:
                 _LOGGER.error(err)
                 raise CannotConnect from err
