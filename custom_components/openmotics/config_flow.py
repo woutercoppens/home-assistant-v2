@@ -108,11 +108,9 @@ class OpenMoticsFlowHandler(config_entries.ConfigFlow):
                         port=self.config[CONF_PORT],
                         ssl=self.config[CONF_VERIFY_SSL],
                     )
-                await self.hass.async_add_executor_job(backendclient.get_token)
+                await backendclient.get_token()
 
-                self.installations = await self.hass.async_add_executor_job(
-                    backendclient.base.installations.all
-                )
+                self.installations = backendclient.installations.get_all()
 
             # TODO: add proper error handling
             except (
