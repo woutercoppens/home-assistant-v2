@@ -42,7 +42,7 @@ async def async_setup_entry(
             continue
 
         # Outputs can contain outlets and lights, so filter out only the outlets (aka switches)
-        if om_outlet.output_type == "OUTLET":
+        if not om_outlet.output_type == "LIGHT":
             entities.append(OpenMoticsSwitch(coordinator, index, om_outlet))
 
     if not entities:
@@ -89,3 +89,11 @@ class OpenMoticsSwitch(OpenMoticsDevice, SwitchEntity):
             self.device_id,
         )
         await self.coordinator.async_refresh()
+
+    @property
+    def icon(self):
+        """Return the icon to use for the valve."""
+        if self._device.output_type == "VALVE":
+            if self.is_on:
+                return "mdi:valve-open"
+            return "mdi:valve-closed"
