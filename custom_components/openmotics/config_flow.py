@@ -14,13 +14,13 @@ from homeassistant.const import (
     CONF_VERIFY_SSL,
 )
 from oauthlib.oauth2.rfc6749.errors import InvalidClientError
-from pyopenmotics.openmotics import BackendClient
-from pyopenmotics.exceptions import (
-    OpenMoticsError,
-    OpenMoticsConnectionError,
-    OpenMoticsConnectionTimeoutError,
-    OpenMoticsRateLimitError,
-    # OpenMoticsAuthenticationError,
+from pyhaopenmotics.openmotics import CloudClient, LocalGatewayClient
+from pyhaopenmotics.errors import (
+    ApiException,
+#     OpenMoticsConnectionError,
+#     OpenMoticsConnectionTimeoutError,
+#     OpenMoticsRateLimitError,
+#     # OpenMoticsAuthenticationError,
 )
 
 from .const import (
@@ -59,7 +59,7 @@ class OpenMoticsFlowHandler(config_entries.ConfigFlow):
         """Create a new instance of the flow handler."""
         self.config = {}
         self.installation_id = None
-        self.installations = {}
+        self.installations = []
         self.clientid = None
         self.client_secret = None
 
@@ -96,32 +96,26 @@ class OpenMoticsFlowHandler(config_entries.ConfigFlow):
             try:
                 # Create a backendclient object and verify authentication.
                 if self.config[CONF_HOST] == DEFAULT_HOST:
-                    backendclient = BackendClient(
+                    backendclient = CloudClient(
                         client_id=self.config[CONF_CLIENT_ID],
                         client_secret=self.config[CONF_CLIENT_SECRET],
                     )
                 else:
-                    backendclient = BackendClient(
+                    backendclient = LocalGatewayClient(
                         client_id=self.config[CONF_CLIENT_ID],
                         client_secret=self.config[CONF_CLIENT_SECRET],
                         server=self.config[CONF_HOST],
                         port=self.config[CONF_PORT],
                         ssl=self.config[CONF_VERIFY_SSL],
                     )
-                await self.hass.async_add_executor_job(backendclient.get_token)
+                await backendclient.get_token()
 
-                self.installations = await self.hass.async_add_executor_job(
-                    backendclient.base.installations.all
-                )
+                self.installations = await backendclient.installations.get_all()
 
             # TODO: add proper error handling
             except (
                 asyncio.TimeoutError,
-                OpenMoticsError,
-                OpenMoticsConnectionError,
-                OpenMoticsConnectionTimeoutError,
-                OpenMoticsRateLimitError,
-                OpenMoticsAuthenticationError,
+                ApiException,
             ) as err:
                 _LOGGER.error(err)
                 raise CannotConnect from err
@@ -159,9 +153,9 @@ class OpenMoticsFlowHandler(config_entries.ConfigFlow):
             ]
 
             installations_options = {
-                installation["id"]: installation["name"]
+                installation.idx: installation.name
                 for installation in self.installations
-                if installation["id"] not in existing_installations
+                if installation.idx not in existing_installations
             }
             if not installations_options:
                 return self.async_abort(reason="no_available_installation")

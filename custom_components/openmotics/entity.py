@@ -40,6 +40,7 @@ class OpenMoticsDevice(CoordinatorEntity):
         self._device = device
 
         self._name = device.name
+        self._local_id = device.local_id
         self._idx = device.idx
         self._local_id = device.local_id
         self._type = device_type
@@ -96,7 +97,7 @@ class OpenMoticsDevice(CoordinatorEntity):
     @property
     def device_id(self) -> str:
         """Return a unique ID."""
-        return self._idx
+        return self._local_id
 
     # @property
     # def sid(self) -> int:
