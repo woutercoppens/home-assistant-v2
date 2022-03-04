@@ -72,7 +72,7 @@ Option 2: HACS installation
 
   ![custom repository](/pictures/custom_repository.png)
 
-  4. Enter `https://github.com/openmotics/home-assistant.git` in the address bar at the bottom left of the window. Select Integration from the Category list and click ADD.
+  4. Enter `https://github.com/woutercoppens/home-assistant-v2.git` in the address bar at the bottom left of the window. Select Integration from the Category list and click ADD.
 
   ![github](/pictures/github.png)
 
