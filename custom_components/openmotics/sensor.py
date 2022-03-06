@@ -61,7 +61,7 @@ async def async_setup_entry(
         if om_sensor.status.humidity is not None:
             entities.append(OpenMoticsHumidity(coordinator, index, om_sensor, "Sensor"))
 
-        if oom_sensor.status.brightness is not None:
+        if om_sensor.status.brightness is not None:
             entities.append(OpenMoticsHumidity(coordinator, index, om_sensor, "Sensor"))
 
     if not entities:
@@ -99,8 +99,12 @@ class OpenMoticsTemperature(OpenMoticsSensor):
     @property
     def native_value(self):
         """Return % chance the aurora is visible."""
-        self._device = self.coordinator.data["sensors"][self.index]
-        return self._device.status.temperature
+        try:
+            self._device = self.coordinator.data["sensors"][self.index]
+            return self._device.status.temperature
+        except (AttributeError, KeyError):
+            return None
+      
 
 class OpenMoticsHumidity(OpenMoticsSensor):
     """Representation of a OpenMotics humidity sensor."""
@@ -111,8 +115,12 @@ class OpenMoticsHumidity(OpenMoticsSensor):
     @property
     def native_value(self):
         """Return % chance the aurora is visible."""
-        self._device = self.coordinator.data["sensors"][self.index]
-        return self._device.status.humidity
+        try:
+            self._device = self.coordinator.data["sensors"][self.index]
+            return self._device.status.humidity
+        except (AttributeError, KeyError):
+            return None
+      
 
 class OpenMoticsBrightness(OpenMoticsSensor):
     """Representation of a OpenMotics humidity sensor."""
@@ -123,5 +131,9 @@ class OpenMoticsBrightness(OpenMoticsSensor):
     @property
     def native_value(self):
         """Return % chance the aurora is visible."""
-        self._device = self.coordinator.data["sensors"][self.index]
-        return self._device.status.brightness
+        try:
+            self._device = self.coordinator.data["sensors"][self.index]
+            return self._device.status.brightness
+        except (AttributeError, KeyError):
+            return None
+      

@@ -106,14 +106,20 @@ class OpenMoticsOutputLight(OpenMoticsDevice, LightEntity):
     @property
     def is_on(self) -> bool:
         """Return true if device is on."""
-        self._device = self.coordinator.data["outputs"][self.index]
-        return self._device.status.on
-
+        try:
+            self._device = self.coordinator.data["outputs"][self.index]
+            return self._device.status.on
+        except (AttributeError, KeyError):
+            return None
+      
     @property
     def brightness(self):
         """Return the brightness of this light between 0..255."""
-        self._device = self.coordinator.data["outputs"][self.index]
-        return self._device.status.value
+        try:
+            self._device = self.coordinator.data["outputs"][self.index]
+            return self._device.status.value
+        except (AttributeError, KeyError):
+            return None
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn device on."""
@@ -185,14 +191,20 @@ class OpenMoticsLight(OpenMoticsDevice, LightEntity):
     @property
     def is_on(self):
         """Return true if device is on."""
-        self._device = self.coordinator.data["lights"][self.index]
-        return self._device.status.on
+        try:
+            self._device = self.coordinator.data["lights"][self.index]
+            return self._device.status.on
+        except (AttributeError, KeyError):
+            return None
 
     @property
     def brightness(self):
         """Return the brightness of this light between 0..255."""
-        self._device = self.coordinator.data["lights"][self.index]
-        return self._device.status.value
+        try:
+            self._device = self.coordinator.data["lights"][self.index]
+            return self._device.status.value
+        except (AttributeError, KeyError):
+            return None
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn device on."""

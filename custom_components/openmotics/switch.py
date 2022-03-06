@@ -62,8 +62,11 @@ class OpenMoticsSwitch(OpenMoticsDevice, SwitchEntity):
     @property
     def is_on(self):
         """Return true if device is on."""
-        self._device = self.coordinator.data["outputs"][self.index]
-        return self._device.status.on
+        try:
+            self._device = self.coordinator.data["outputs"][self.index]
+            return self._device.status.on
+        except (AttributeError, KeyError):
+            return None
 
     async def async_turn_on(self, **kwargs):
         """Turn devicee off."""

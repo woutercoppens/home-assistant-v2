@@ -8,6 +8,9 @@ from homeassistant.components.cover import (
     ATTR_POSITION,
     SUPPORT_CLOSE,
     SUPPORT_OPEN,
+    SUPPORT_STOP,
+    SUPPORT_SET_POSITION,
+    CoverDeviceClass,
     CoverEntity,
 )
 from homeassistant.const import (
@@ -23,6 +26,14 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN, NOT_IN_USE
 from .coordinator import OpenMoticsDataUpdateCoordinator
 from .entity import OpenMoticsDevice
+
+VALUE_TO_STATE = {
+    "DOWN": STATE_CLOSED,
+    "GOING_DOWN": STATE_CLOSING,
+    "UP": STATE_OPEN,
+    "GOING_UP": STATE_OPENING,
+    "STOP": None,
+}
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -69,7 +80,37 @@ class OpenMoticsShutter(OpenMoticsDevice, CoverEntity):
         super().__init__(coordinator, index, device, "cover")
         
         self._device = self.coordinator.data["shutters"][self.index]
-  
+        self._state = None
+
+        self._supported_features = SUPPORT_OPEN | SUPPORT_CLOSE | SUPPORT_STOP 
+        if "POSITION" in device.capabilities:
+            self._supported_features |= SUPPORT_SET_POSITION  
+
+    @property
+    def supported_features(self):
+        """Flag supported features."""
+        return self._supported_features
+
+    @property
+    def is_opening(self):
+        """Return if the cover is opening or not."""
+        try:
+            self._device = self.coordinator.data["shutters"][self.index]
+            self._state = self._device.status.state
+            return VALUE_TO_STATE.get(self._state) == STATE_OPENING
+        except (AttributeError, KeyError):
+            return None
+
+    @property
+    def is_closing(self):
+        """Return if the cover is closing or not."""
+        try:
+            self._device = self.coordinator.data["shutters"][self.index]
+            self._state = self._device.status.state
+            return VALUE_TO_STATE.get(self._state) == STATE_CLOSING
+        except (AttributeError, KeyError):
+            return None  
+
     @property
     def is_closed(self):
         """Return if the cover is closed."""
@@ -80,9 +121,13 @@ class OpenMoticsShutter(OpenMoticsDevice, CoverEntity):
     @property
     def current_cover_position(self):
         """Return the current position of cover."""
-        # None is unknown, 0 is closed, 100 is fully open.
-        self._device = self.coordinator.data["shutters"][self.index]
-        return self._device.status.position
+        # for HA None is unknown, 0 is closed, 100 is fully open.
+        # for OM 0 is open and 100 is closed
+        try:
+            self._device = self.coordinator.data["shutters"][self.index]
+            return ( 100 - self._device.status.position )
+        except (AttributeError, KeyError):
+            return None   
 
     async def async_open_cover(self, **kwargs):
         """Open the window cover."""
@@ -105,5 +150,17 @@ class OpenMoticsShutter(OpenMoticsDevice, CoverEntity):
         await self.coordinator.omclient.shutters.stop(
             self.install_id,
             self.device_id,
+        )
+        await self.coordinator.async_refresh()
+
+    async def async_set_cover_position(self, **kwargs: Any) -> None:
+        """Move the cover to a specific position."""
+        if not self._supported_features & SUPPORT_SET_POSITION:
+            return
+        position = 100 - kwargs[ATTR_POSITION]
+        await self.coordinator.omclient.shutters.change_position(
+            self.install_id,
+            self.device_id,
+            position,
         )
         await self.coordinator.async_refresh()
