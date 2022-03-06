@@ -1,15 +1,13 @@
 """Support for HomeAssistant scenes (aka group actions)."""
 from __future__ import annotations
 
-from typing import Any, Generic, TypeVar
-
 import logging
+from typing import Any, Generic, TypeVar
 
 from homeassistant.components.scene import Scene
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-
 
 from .const import DOMAIN, NOT_IN_USE
 from .coordinator import OpenMoticsDataUpdateCoordinator
@@ -34,11 +32,7 @@ async def async_setup_entry(
     coordinator: OpenMoticsDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
 
     for index, om_scene in enumerate(coordinator.data["groupactions"]):
-        if (
-            om_scene.name is None
-            or om_scene.name == ""
-            or om_scene.name == NOT_IN_USE
-        ):
+        if om_scene.name is None or om_scene.name == "" or om_scene.name == NOT_IN_USE:
             continue
         # print("- {}".format(om_scene))
         entities.append(OpenMoticsScene(coordinator, index, om_scene))
@@ -58,7 +52,7 @@ class OpenMoticsScene(OpenMoticsDevice, Scene):
     def __init__(self, coordinator: OpenMoticsDataUpdateCoordinator, index, om_scene):
         """Initialize the scene."""
         super().__init__(coordinator, index, om_scene, "scene")
-        
+
         self._device = self.coordinator.data["groupactions"][self.index]
 
     async def async_activate(self, **kwargs: Any) -> None:

@@ -4,8 +4,8 @@ from __future__ import annotations
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
-from .coordinator import OpenMoticsDataUpdateCoordinator
 from .const import DOMAIN
+from .coordinator import OpenMoticsDataUpdateCoordinator
 
 
 async def async_get_config_entry_diagnostics(

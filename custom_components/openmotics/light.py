@@ -2,10 +2,8 @@
 from __future__ import annotations
 
 import logging
-# from typing import ValuesView
 
-from homeassistant.components.light import (
-    # SUPPORT_BRIGHTNESS, # Deprecated, replaced by color modes
+from homeassistant.components.light import (  # SUPPORT_BRIGHTNESS, # Deprecated, replaced by color modes
     ATTR_BRIGHTNESS,
     ATTR_COLOR_MODE,
     ATTR_COLOR_TEMP,
@@ -22,12 +20,14 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-
 from .const import DOMAIN, NOT_IN_USE
-from .coordinator import (
-    OpenMoticsDataUpdateCoordinator
-)
+from .coordinator import OpenMoticsDataUpdateCoordinator
 from .entity import OpenMoticsDevice
+
+# from typing import ValuesView
+
+
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -48,11 +48,7 @@ async def async_setup_entry(
     coordinator: OpenMoticsDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
 
     for index, om_light in enumerate(coordinator.data["outputs"]):
-        if (
-            om_light.name is None
-            or om_light.name == ""
-            or om_light.name == NOT_IN_USE
-        ):
+        if om_light.name is None or om_light.name == "" or om_light.name == NOT_IN_USE:
             continue
 
         # Outputs can contain outlets and lights, so filter out only the lights
@@ -60,11 +56,7 @@ async def async_setup_entry(
             entities.append(OpenMoticsOutputLight(coordinator, index, om_light))
 
     for index, om_light in enumerate(coordinator.data["lights"]):
-        if (
-            om_light.name is None
-            or om_light.name == ""
-            or om_light.name == NOT_IN_USE
-        ):
+        if om_light.name is None or om_light.name == "" or om_light.name == NOT_IN_USE:
             continue
 
         entities.append(OpenMoticsLight(coordinator, index, om_light))
@@ -73,7 +65,7 @@ async def async_setup_entry(
         _LOGGER.info("No OpenMotics Lights added")
         return False
 
-    async_add_entities(entities,True)
+    async_add_entities(entities, True)
 
 
 def brightness_to_percentage(byt):
@@ -111,7 +103,7 @@ class OpenMoticsOutputLight(OpenMoticsDevice, LightEntity):
             return self._device.status.on
         except (AttributeError, KeyError):
             return None
-      
+
     @property
     def brightness(self):
         """Return the brightness of this light between 0..255."""
@@ -125,13 +117,17 @@ class OpenMoticsOutputLight(OpenMoticsDevice, LightEntity):
         """Turn device on."""
         if ATTR_BRIGHTNESS in kwargs:
             # Openmotics brightness (value) is between 0..100
-            _LOGGER.debug("Turning on light: %s brightness %s", self.device_id, kwargs[ATTR_BRIGHTNESS])
+            _LOGGER.debug(
+                "Turning on light: %s brightness %s",
+                self.device_id,
+                kwargs[ATTR_BRIGHTNESS],
+            )
             response = await self.coordinator.omclient.outputs.turn_on(
                 self.install_id,
                 self.device_id,
-                brightness_to_percentage(kwargs[ATTR_BRIGHTNESS]), #value
+                brightness_to_percentage(kwargs[ATTR_BRIGHTNESS]),  # value
             )
-        else: 
+        else:
             _LOGGER.debug("Turning on light: %s", self.device_id)
             response = await self.coordinator.omclient.outputs.turn_on(
                 self.install_id,
@@ -147,7 +143,7 @@ class OpenMoticsOutputLight(OpenMoticsDevice, LightEntity):
         #         self.device.status.value = brightness_from_percentage(response["value"])
         #     except KeyError:
         #         self.device.status.value = None
-            
+
         await self.coordinator.async_refresh()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
@@ -165,6 +161,7 @@ class OpenMoticsOutputLight(OpenMoticsDevice, LightEntity):
 
     #     await self.async_update_ha_state(True)
 
+
 class OpenMoticsLight(OpenMoticsDevice, LightEntity):
     """Representation of a OpenMotics light."""
 
@@ -173,14 +170,14 @@ class OpenMoticsLight(OpenMoticsDevice, LightEntity):
     def __init__(self, coordinator: OpenMoticsDataUpdateCoordinator, index, device):
         """Initialize the light."""
         super().__init__(coordinator, index, device, "light")
-        
+
         self._attr_supported_color_modes = set()
 
         if "RANGE" in device.capabilities:
             self._attr_supported_color_modes.add(COLOR_MODE_BRIGHTNESS)
             # Default: Brightness (no color)
             self._attr_color_mode = COLOR_MODE_BRIGHTNESS
-        
+
         if "WHITE_TEMP" in device.capabilities:
             self._attr_supported_color_modes.add(COLOR_MODE_COLOR_TEMP)
             self._attr_supported_color_modes.add(COLOR_MODE_HS)
@@ -210,13 +207,17 @@ class OpenMoticsLight(OpenMoticsDevice, LightEntity):
         """Turn device on."""
         if ATTR_BRIGHTNESS in kwargs:
             # Openmotics brightness (value) is between 0..100
-            _LOGGER.debug("Turning on light: %s brightness %s", self.device_id, kwargs[ATTR_BRIGHTNESS])
+            _LOGGER.debug(
+                "Turning on light: %s brightness %s",
+                self.device_id,
+                kwargs[ATTR_BRIGHTNESS],
+            )
             response = await self.coordinator.omclient.lights.turn_on(
                 self.install_id,
                 self.device_id,
-                brightness_to_percentage(kwargs[ATTR_BRIGHTNESS]), #value
+                brightness_to_percentage(kwargs[ATTR_BRIGHTNESS]),  # value
             )
-        else: 
+        else:
             _LOGGER.debug("Turning on light: %s", self.device_id)
             response = await self.coordinator.omclient.lights.turn_on(
                 self.install_id,
@@ -232,9 +233,9 @@ class OpenMoticsLight(OpenMoticsDevice, LightEntity):
         #         self.device.status.value = brightness_from_percentage(response["value"])
         #     except KeyError:
         #         self.device.status.value = None
-            
+
         await self.coordinator.async_refresh()
-        
+
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn devicee off."""
         _LOGGER.debug("Turning off light: %s", self.device_id)

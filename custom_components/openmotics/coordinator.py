@@ -3,8 +3,8 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from async_timeout import timeout
 
+from async_timeout import timeout
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONF_CLIENT_ID,
@@ -14,24 +14,14 @@ from homeassistant.const import (
     CONF_VERIFY_SSL,
 )
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.exceptions import ConfigEntryNotReady
-
-from pyhaopenmotics.openmotics import CloudClient, LocalGatewayClient
-from pyhaopenmotics.errors import (
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from pyhaopenmotics.errors import (  # OpenMoticsConnectionError,; OpenMoticsConnectionTimeoutError,; OpenMoticsRateLimitError,; # OpenMoticsAuthenticationError,
     ApiException,
-#     OpenMoticsConnectionError,
-#     OpenMoticsConnectionTimeoutError,
-#     OpenMoticsRateLimitError,
-#     # OpenMoticsAuthenticationError,
 )
+from pyhaopenmotics.openmotics import CloudClient, LocalGatewayClient
 
-from .const import (
-    CONF_INSTALLATION_ID,
-    DEFAULT_HOST,
-    DEFAULT_SCAN_INTERVAL,
-    DOMAIN,
-)
+from .const import CONF_INSTALLATION_ID, DEFAULT_HOST, DEFAULT_SCAN_INTERVAL, DOMAIN
 from .exceptions import CannotConnect, InvalidAuth
 
 _LOGGER = logging.getLogger(__name__)
@@ -69,9 +59,7 @@ class OpenMoticsDataUpdateCoordinator(DataUpdateCoordinator):
 
     async def get_token(self) -> bool:
         """Login to OpenMotics cloud / gateway."""
-        _LOGGER.debug(
-            "Logging in via get_token to installation: %s", self._install_id
-        )
+        _LOGGER.debug("Logging in via get_token to installation: %s", self._install_id)
         try:
             await self._omclient.get_token()
 
@@ -93,13 +81,13 @@ class OpenMoticsDataUpdateCoordinator(DataUpdateCoordinator):
 
         This is the place to pre-process the data to lookup tables so entities can quickly look up their data.
         """
- 
+
         try:
-            my_outputs = await self._omclient.outputs.get_all( self.install_id )
-            my_lights = await self._omclient.lights.get_all( self.install_id )
-            my_groupactions = await self._omclient.groupactions.get_all( self.install_id )
-            my_shutters = await self._omclient.shutters.get_all( self.install_id )
-            my_sensors = await self._omclient.sensors.get_all( self.install_id )
+            my_outputs = await self._omclient.outputs.get_all(self.install_id)
+            my_lights = await self._omclient.lights.get_all(self.install_id)
+            my_groupactions = await self._omclient.groupactions.get_all(self.install_id)
+            my_shutters = await self._omclient.shutters.get_all(self.install_id)
+            my_sensors = await self._omclient.sensors.get_all(self.install_id)
 
         except ApiException as err:
             _LOGGER.error("Could not retrieve the data from the OpenMotics API")

@@ -1,9 +1,8 @@
 """Adds config flow for OpenMotics."""
 from __future__ import annotations
 
-import logging
-import voluptuous as vol
 import asyncio
+import logging
 
 from homeassistant import config_entries
 from homeassistant.const import (
@@ -14,14 +13,11 @@ from homeassistant.const import (
     CONF_VERIFY_SSL,
 )
 from oauthlib.oauth2.rfc6749.errors import InvalidClientError
-from pyhaopenmotics.openmotics import CloudClient, LocalGatewayClient
-from pyhaopenmotics.errors import (
+from pyhaopenmotics.errors import (  # OpenMoticsConnectionError,; OpenMoticsConnectionTimeoutError,; OpenMoticsRateLimitError,; # OpenMoticsAuthenticationError,
     ApiException,
-#     OpenMoticsConnectionError,
-#     OpenMoticsConnectionTimeoutError,
-#     OpenMoticsRateLimitError,
-#     # OpenMoticsAuthenticationError,
 )
+from pyhaopenmotics.openmotics import CloudClient, LocalGatewayClient
+import voluptuous as vol
 
 from .const import (
     CONF_INSTALLATION_ID,
@@ -30,10 +26,8 @@ from .const import (
     DEFAULT_VERIFY_SSL,
     DOMAIN,
 )
-
 # from .coordinator import get_backendclient
 from .exceptions import CannotConnect, InvalidAuth
-
 
 BACKENDCLIENT_CONFIG = vol.Schema(
     {

@@ -2,30 +2,21 @@
 from unittest.mock import patch
 
 from homeassistant import config_entries, data_entry_flow
+from homeassistant.const import CONF_HOST, CONF_PORT, CONF_VERIFY_SSL
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from homeassistant.const import (
-    CONF_PORT,
-    CONF_HOST,
-    CONF_VERIFY_SSL,
-)
-
-from custom_components.openmotics.const import (
-    DOMAIN,
-    PLATFORMS,
-    LIGHT,
-)
-
-from .const import MOCK_CONFIG
+from custom_components.openmotics.const import DOMAIN, LIGHT, PLATFORMS
 
 from .const import (
     DEFAULT_HOST,
     DEFAULT_PORT,
     DEFAULT_VERIFY_SSL,
     DOMAIN,
+    MOCK_CONFIG,
     PLATFORMS,
 )
+
 
 # This fixture bypasses the actual setup of the integration
 # since we only want to test the config flow. We test the

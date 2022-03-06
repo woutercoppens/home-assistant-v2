@@ -3,9 +3,7 @@ from __future__ import annotations
 
 import logging
 
-from homeassistant.components.switch import (
-    SwitchEntity,
-)
+from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 # from homeassistant.const import STATE_OFF, STATE_ON
 from homeassistant.core import HomeAssistant
@@ -49,7 +47,7 @@ async def async_setup_entry(
         _LOGGER.info("No OpenMotics Outlets added")
         return False
 
-    async_add_entities(entities,True)
+    async_add_entities(entities, True)
 
 
 class OpenMoticsSwitch(OpenMoticsDevice, SwitchEntity):

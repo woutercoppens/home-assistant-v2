@@ -26,21 +26,11 @@ from homeassistant.const import (
     CONF_VERIFY_SSL,
 )
 from homeassistant.core import HomeAssistant
-
 # from homeassistant.core import Config, HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
-
 # from homeassistant.helpers.aiohttp_client import async_get_clientsession
 import homeassistant.helpers.config_validation as cv
-
-# from homeassistant.helpers.entity import Entity
-# from homeassistant.helpers.typing import ConfigType
-# from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-# from openmotics.clients.cloud import APIError, BackendClient
-# from openmotics.clients.cloud import BackendClient
-# from openmotics.clients.error import APIError
-
 import voluptuous as vol
 
 from .const import (
@@ -53,6 +43,15 @@ from .const import (
 )
 from .coordinator import OpenMoticsDataUpdateCoordinator
 from .exceptions import CannotConnect
+
+# from homeassistant.helpers.entity import Entity
+# from homeassistant.helpers.typing import ConfigType
+# from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+# from openmotics.clients.cloud import APIError, BackendClient
+# from openmotics.clients.cloud import BackendClient
+# from openmotics.clients.error import APIError
+
+
 
 # from openmotics.clients.exceptions import APIException
 

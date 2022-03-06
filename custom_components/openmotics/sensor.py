@@ -56,7 +56,9 @@ async def async_setup_entry(
             continue
 
         if om_sensor.status.temperature is not None:
-            entities.append(OpenMoticsTemperature(coordinator, index, om_sensor, "Sensor"))
+            entities.append(
+                OpenMoticsTemperature(coordinator, index, om_sensor, "Sensor")
+            )
 
         if om_sensor.status.humidity is not None:
             entities.append(OpenMoticsHumidity(coordinator, index, om_sensor, "Sensor"))
@@ -85,7 +87,7 @@ class OpenMoticsSensor(OpenMoticsDevice, SensorEntity):
     ):
         """Initialize the light."""
         super().__init__(coordinator, index, device, "sensor")
-        
+
         self.entity_description = description
         self._state = None
 
@@ -104,13 +106,13 @@ class OpenMoticsTemperature(OpenMoticsSensor):
             return self._device.status.temperature
         except (AttributeError, KeyError):
             return None
-      
+
 
 class OpenMoticsHumidity(OpenMoticsSensor):
     """Representation of a OpenMotics humidity sensor."""
 
     _attr_native_unit_of_measurement = PERCENTAGE
-    _device_class=DEVICE_CLASS_HUMIDITY
+    _device_class = DEVICE_CLASS_HUMIDITY
 
     @property
     def native_value(self):
@@ -120,13 +122,13 @@ class OpenMoticsHumidity(OpenMoticsSensor):
             return self._device.status.humidity
         except (AttributeError, KeyError):
             return None
-      
+
 
 class OpenMoticsBrightness(OpenMoticsSensor):
     """Representation of a OpenMotics humidity sensor."""
 
-    _native_unit_of_measurement=PERCENTAGE,
-    _device_class=DEVICE_CLASS_ILLUMINANCE,
+    _native_unit_of_measurement = (PERCENTAGE,)
+    _device_class = (DEVICE_CLASS_ILLUMINANCE,)
 
     @property
     def native_value(self):
@@ -136,4 +138,3 @@ class OpenMoticsBrightness(OpenMoticsSensor):
             return self._device.status.brightness
         except (AttributeError, KeyError):
             return None
-      

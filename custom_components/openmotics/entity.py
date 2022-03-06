@@ -1,21 +1,24 @@
 """Generic OpenMoticDevice Enity."""
 from __future__ import annotations
 
+from homeassistant.helpers.entity import DeviceInfo, Entity
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
+
+from .const import DOMAIN
+from .coordinator import OpenMoticsDataUpdateCoordinator
+
 # from abc import abstractmethod
 
 # from typing import Any, Generic, TypeVar
 
-from homeassistant.helpers.entity import Entity
+
 # from homeassistant.helpers.typing import ConfigType
 
-from homeassistant.helpers.entity import DeviceInfo
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
+
 # from homeassistant.helpers.restore_state import RestoreEntity
 
 # from homeassistant.core import HomeAssistant, callback
 
-from .const import DOMAIN
-from .coordinator import OpenMoticsDataUpdateCoordinator
 
 # class OpenMoticsDevice(CoordinatorEntity, Entity):
 class OpenMoticsDevice(CoordinatorEntity):
@@ -27,7 +30,7 @@ class OpenMoticsDevice(CoordinatorEntity):
         self,
         coordinator: OpenMoticsDataUpdateCoordinator,
         index: str,
-        device, 
+        device,
         device_type: str,
     ) -> None:
         """Initialize the device."""
@@ -56,7 +59,7 @@ class OpenMoticsDevice(CoordinatorEntity):
     #     return super().available and True
 
     @property
-    def device(self)-> Any:
+    def device(self) -> Any:
         """Return the device."""
         return self._device
 
@@ -120,7 +123,7 @@ class OpenMoticsDevice(CoordinatorEntity):
     #     return self._is_available
 
     @property
-    def device_info(self)-> DeviceInfo:
+    def device_info(self) -> DeviceInfo:
         """Return information about the device."""
         return DeviceInfo(
             identifiers={(DOMAIN, self.unique_id)},
