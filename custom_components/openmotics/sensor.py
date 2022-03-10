@@ -7,11 +7,10 @@ import logging
 
 from homeassistant.components.sensor import (
     STATE_CLASS_MEASUREMENT,
-    SensorEntity,
     SensorDeviceClass,
     SensorEntity,
-    SensorStateClass,
     SensorEntityDescription,
+    SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
@@ -58,16 +57,14 @@ async def async_setup_entry(
         ):
             continue
 
-        if om_sensor.physical_quantity == 'temperature':
-            entities.append(
-                OpenMoticsTemperature(coordinator, index, om_sensor )
-            )
+        if om_sensor.physical_quantity == "temperature":
+            entities.append(OpenMoticsTemperature(coordinator, index, om_sensor))
 
-        if om_sensor.physical_quantity == 'humidity':
-            entities.append(OpenMoticsHumidity(coordinator, index, om_sensor ))
+        if om_sensor.physical_quantity == "humidity":
+            entities.append(OpenMoticsHumidity(coordinator, index, om_sensor))
 
-        if om_sensor.physical_quantity == 'brightness':
-            entities.append(OpenMoticsBrightness(coordinator, index, om_sensor ))
+        if om_sensor.physical_quantity == "brightness":
+            entities.append(OpenMoticsBrightness(coordinator, index, om_sensor))
 
     if not entities:
         _LOGGER.info("No OpenMotics sensors added")

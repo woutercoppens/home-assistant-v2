@@ -27,8 +27,6 @@ from .entity import OpenMoticsDevice
 # from typing import ValuesView
 
 
-
-
 _LOGGER = logging.getLogger(__name__)
 
 

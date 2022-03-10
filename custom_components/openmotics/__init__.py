@@ -52,7 +52,6 @@ from .exceptions import CannotConnect
 # from openmotics.clients.error import APIError
 
 
-
 # from openmotics.clients.exceptions import APIException
 
 CONFIG_SCHEMA = vol.Schema(
