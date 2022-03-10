@@ -100,4 +100,6 @@ class OpenMoticsSwitch(OpenMoticsDevice, SwitchEntity):
             return "mdi:valve-closed"
         """Return the icon to use for the fan / ventilation."""
         if self._device.output_type == "VENTILATION":
-            return "mdi:fan"
+            if self.is_on:
+                return "mdi:fan"
+            return "mdi:fan-off"

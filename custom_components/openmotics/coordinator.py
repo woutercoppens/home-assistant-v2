@@ -99,6 +99,7 @@ class OpenMoticsDataUpdateCoordinator(DataUpdateCoordinator):
                 "shutters": [],
                 "sensors": [],
             }
+
         # Store data in a way Home Assistant can easily consume it
         return {
             "outputs": my_outputs,

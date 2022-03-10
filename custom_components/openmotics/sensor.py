@@ -8,6 +8,9 @@ import logging
 from homeassistant.components.sensor import (
     STATE_CLASS_MEASUREMENT,
     SensorEntity,
+    SensorDeviceClass,
+    SensorEntity,
+    SensorStateClass,
     SensorEntityDescription,
 )
 from homeassistant.config_entries import ConfigEntry
@@ -55,16 +58,16 @@ async def async_setup_entry(
         ):
             continue
 
-        if om_sensor.status.temperature is not None:
+        if om_sensor.physical_quantity == 'temperature':
             entities.append(
-                OpenMoticsTemperature(coordinator, index, om_sensor, "Sensor")
+                OpenMoticsTemperature(coordinator, index, om_sensor )
             )
 
-        if om_sensor.status.humidity is not None:
-            entities.append(OpenMoticsHumidity(coordinator, index, om_sensor, "Sensor"))
+        if om_sensor.physical_quantity == 'humidity':
+            entities.append(OpenMoticsHumidity(coordinator, index, om_sensor ))
 
-        if om_sensor.status.brightness is not None:
-            entities.append(OpenMoticsHumidity(coordinator, index, om_sensor, "Sensor"))
+        if om_sensor.physical_quantity == 'brightness':
+            entities.append(OpenMoticsBrightness(coordinator, index, om_sensor ))
 
     if not entities:
         _LOGGER.info("No OpenMotics sensors added")
@@ -83,12 +86,12 @@ class OpenMoticsSensor(OpenMoticsDevice, SensorEntity):
         coordinator: OpenMoticsDataUpdateCoordinator,
         index,
         device,
-        description: SensorEntityDescription,
+        # description: SensorEntityDescription,
     ):
         """Initialize the light."""
         super().__init__(coordinator, index, device, "sensor")
 
-        self.entity_description = description
+        # self.entity_description = description
         self._state = None
 
 
@@ -127,8 +130,8 @@ class OpenMoticsHumidity(OpenMoticsSensor):
 class OpenMoticsBrightness(OpenMoticsSensor):
     """Representation of a OpenMotics humidity sensor."""
 
-    _native_unit_of_measurement = (PERCENTAGE,)
-    _device_class = (DEVICE_CLASS_ILLUMINANCE,)
+    _native_unit_of_measurement = PERCENTAGE
+    _device_class = DEVICE_CLASS_ILLUMINANCE
 
     @property
     def native_value(self):
