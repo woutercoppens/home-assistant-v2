@@ -116,13 +116,13 @@ class OpenMoticsShutter(OpenMoticsDevice, CoverEntity):
         # for OM 0 is open and 100 is closed
         try:
             self._device = self.coordinator.data["shutters"][self.index]
-            return 100 - self._device.status.position
+            return (100 - self._device.status.position)
         except (AttributeError, KeyError):
             return None
 
     async def async_open_cover(self, **kwargs):
         """Open the window cover."""
-        await self.coordinator.omclient.shutters.up(
+        await self.coordinator.omclient.shutters.move_up(
             self.install_id,
             self.device_id,
         )
@@ -130,7 +130,7 @@ class OpenMoticsShutter(OpenMoticsDevice, CoverEntity):
 
     async def async_close_cover(self, **kwargs):
         """Open the window cover."""
-        await self.coordinator.omclient.shutters.down(
+        await self.coordinator.omclient.shutters.move_down(
             self.install_id,
             self.device_id,
         )
